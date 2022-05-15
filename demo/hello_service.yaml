@@ -10,18 +10,50 @@ static_resources:
       - name: envoy.filters.network.http_connection_manager
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-          stat_prefix: hello_world_service
+          stat_prefix: ingress_http
+          # HTTP 过滤器链中的最后一个过滤器必须是路由器过滤器（envoy.filters.HTTP.router）。路由器过滤器负责执行路由任务。这最终把我们带到了第二个构件 —— 路由。
+          # 注意，一定要设置上 router 这个 http filter，要不然 hcm 不会开启路由功能，请求不会路由到 cluster 上
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           route_config:
-            name: my_first_route
+            name: hello_world_service
             virtual_hosts:
-            - name: direct_response_service
-              domains: ["*"]
+            - name: hello_world_service
+              domains:
+              - "*"
               routes:
+              # 注意: routes 中定义的规则是有顺序的，/api 要放到 / 之前，要不然所有的请求都会匹配到 app_service 上
+              - match:
+                  prefix: "/api"
+                route:
+                  cluster: api_service
               - match:
                   prefix: "/"
-                direct_response:
-                  status: 200
-                  body:
-                    inline_string: "yay"
+                # 注意: route 和 match 是平级的
+                route:
+                  cluster: app_service
+  clusters:
+  - name: app_service
+    connect_timeout: 5s
+    load_assignment:
+      cluster_name: app_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 127.0.0.1
+                port_value: 8000
+  - name: api_service
+    connect_timeout: 5s
+    load_assignment:
+      cluster_name: api_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 127.0.0.1
+                port_value: 8001
