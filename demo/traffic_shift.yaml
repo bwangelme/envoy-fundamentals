@@ -18,50 +18,24 @@ static_resources:
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           route_config:
-            name: hello_world_service
-            # response_headers_to_add 用来向响应中添加 header，分为四个层级
-            # 1. 集群级头信息
-            # 2. 路由级 header
-            # 3. 虚拟主机级 header
-            # 4. 全局级 header
-            response_headers_to_add:
-            - header:
-                key: "route_config"
-                value: "hello world service"
+            name: traffic_shift
             virtual_hosts:
-            - name: hello_world_service
-              response_headers_to_add:
-              - header:
-                  key: "virtualhost"
-                  value: "hello world service"
+            - name: traffic_shift
               domains:
               - "*"
               routes:
-              # 注意: routes 中定义的规则是有顺序的，/api 要放到 / 之前，要不然所有的请求都会匹配到 app_service 上
-              - match:
-                  prefix: "/api"
-                route:
-                  cluster: api_service
-                response_headers_to_add:
-                - header:
-                    key: "cluster"
-                    value: "api_service"
               - match:
                   prefix: "/"
-                  headers:
-                  - name: API-VERSION
-                    present_match:
-                route:
-                  cluster: api_service
-              - match:
-                  prefix: "/"
-                # 注意: route 和 match 是平级的
+                  runtime_fraction:
+                    default_value:
+                      numerator: 0
+                      denominator: HUNDRED
                 route:
                   cluster: app_service
-                response_headers_to_add:
-                - header:
-                    key: "cluster"
-                    value: "app_service"
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: api_service
   clusters:
   - name: app_service
     connect_timeout: 5s
