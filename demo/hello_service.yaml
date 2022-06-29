@@ -19,8 +19,21 @@ static_resources:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           route_config:
             name: hello_world_service
+            # response_headers_to_add 用来向响应中添加 header，分为四个层级
+            # 1. 集群级头信息
+            # 2. 路由级 header
+            # 3. 虚拟主机级 header
+            # 4. 全局级 header
+            response_headers_to_add:
+            - header:
+                key: "route_config"
+                value: "hello world service"
             virtual_hosts:
             - name: hello_world_service
+              response_headers_to_add:
+              - header:
+                  key: "virtualhost"
+                  value: "hello world service"
               domains:
               - "*"
               routes:
@@ -29,11 +42,19 @@ static_resources:
                   prefix: "/api"
                 route:
                   cluster: api_service
+                response_headers_to_add:
+                - header:
+                    key: "cluster"
+                    value: "api_service"
               - match:
                   prefix: "/"
                 # 注意: route 和 match 是平级的
                 route:
                   cluster: app_service
+                response_headers_to_add:
+                - header:
+                    key: "cluster"
+                    value: "app_service"
   clusters:
   - name: app_service
     connect_timeout: 5s
