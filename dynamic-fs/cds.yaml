@@ -1,0 +1,14 @@
+version_info: "0"
+resources:
+- "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+  name: instance_1
+  connect_timeout: 5s
+  load_assignment:
+    cluster_name: instance_1
+    endpoints:
+    - lb_endpoints:
+      - endpoint:
+          address:
+            socket_address:
+              address: 127.0.0.1
+              port_value: 5050

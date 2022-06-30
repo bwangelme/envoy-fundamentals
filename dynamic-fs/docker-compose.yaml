@@ -1,0 +1,6 @@
+version: "3"
+services:
+  instance:
+    image: kennethreitz/httpbin
+    ports:
+    - 5050:80
