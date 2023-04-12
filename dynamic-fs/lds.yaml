@@ -20,3 +20,8 @@ resources:
           route_config_name: route_config_1
           config_source:
             path: ./rds.yaml
+admin:
+  address:
+    socket_address:
+      address: 127.0.0.1
+      port_value: 9901
