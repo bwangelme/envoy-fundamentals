@@ -1,0 +1,6 @@
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
+github.com/tetratelabs/proxy-wasm-go-sdk v0.22.1-0.20230329012223-19b7668e793c h1:X2gJUzT4OBLy7+mOlhKpgX9PcPjSeluYDnFfG591uio=
+github.com/tetratelabs/proxy-wasm-go-sdk v0.22.1-0.20230329012223-19b7668e793c/go.mod h1:ONJBpAT76cj5X8ysJAkOdLKR/9jXgSTniWG+NGey7Yg=
+gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
